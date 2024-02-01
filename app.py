@@ -2,6 +2,7 @@ from flask import Flask, request
 import numpy as np
 import onnxruntime
 from huggingface_hub import hf_hub_download
+from flask import jsonify
 import os
 
 app = Flask(__name__)
@@ -28,7 +29,8 @@ def check_url():
         result = sess.run(None, {"inputs": np.array([url], dtype="str")})[1]
 
         # Return the likelihood of phishing as a plain text response
-        return f"Likelihood of being a phishing site: {result[0][1] * 100:.2f} %"
+        # return f"Likelihood of being a phishing site: {result[0][1] * 100:.2f} %"
+        return jsonify({"Likelihood of being a phishing site (prediction): ": f"{result[0][1] * 100:.2f} %"})
 
     except Exception as e:
         print("Error:", e)  # Print the error details for debugging

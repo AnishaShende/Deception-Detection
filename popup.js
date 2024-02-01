@@ -111,54 +111,84 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isPhishing) {
       // Phishing styling
       websiteName.style.color = "red";
-      accuracyText.innerText = "";
+      // accuracyText.innerText = "";
+      accuracyText.innerText = "This website is identified as a phishing site.";
     } else {
       // Genuine styling
       websiteName.style.color = "green";
       accuracyText.style.color = "green";
-      accuracyText.innerText = "with accuracy of 97.5% is";
+      // accuracyText.innerText = "with accuracy of 97.5% is";
+      accuracyText.innerText = "This website is identified as genuine.";
       // Display accuracy text
       // accuracyText.innerText = 'with accuracy of 97.5% is';
     }
   }
-  function makePrediction(url) {
-    // Simulate a delay (replace with your actual logic)
-    var apiUrl = "http://127.0.0.1:33507/check-url";
-    // return new Promise((resolve) => {
-    //   setTimeout(() => {
-    //     // Call your machine learning model to get the prediction result
-    //     // You'll need to implement this part based on your model and its integration
-    //     // Resolve with true if phishing, false otherwise
-    //     // For example:
-    //     // resolve(fetch('YOUR_MODEL_API_ENDPOINT', { method: 'POST', body: JSON.stringify({ url: url }) })
-    //     //   .then(response => response.json())
-    //     //   .then(data => data.isPhishing));
-    //     resolve(false); // Replace this line with actual logic
-    //   }, 2000); // Simulate a 2-second delay
-    // });
+  // async function makePrediction(url) {
+  //   // Simulate a delay (replace with your actual logic)
+  //   var apiUrl = "http://127.0.0.1:5000/check-url";
+  //   // return new Promise((resolve) => {
+  //   //   setTimeout(() => {
+  //   //     // Call your machine learning model to get the prediction result
+  //   //     // You'll need to implement this part based on your model and its integration
+  //   //     // Resolve with true if phishing, false otherwise
+  //   //     // For example:
+  //   //     // resolve(fetch('YOUR_MODEL_API_ENDPOINT', { method: 'POST', body: JSON.stringify({ url: url }) })
+  //   //     //   .then(response => response.json())
+  //   //     //   .then(data => data.isPhishing));
+  //   //     resolve(false); // Replace this line with actual logic
+  //   //   }, 2000); // Simulate a 2-second delay
+  //   // });
+  //   try {
+  //     const response = await fetch(apiUrl, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ url: url }),
+  //     }).then(
+  //       (response) => response.json()
+  //       // .then((data) => data.isPhishing)
+  //     );
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       const prediction = data.prediction;
+  //       const resultDiv = document.getElementById("accuracy-text");
+  //       resultDiv.innerText =
+  //         prediction === 0 ? " " : "with accuracy of 97.5% is";
+  //       return prediction === 1;
+  //     } else {
+  //       console.error("Request failed:", response.status);
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     return false;
+  //   }
+  //   // }
+  // }
+  async function makePrediction(url) {
     try {
-      const response = fetch(apiUrl, {
+      const apiUrl = "http://127.0.0.1:5000/check-url";
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ url: url }),
-      }).then(
-        (response) => response.json()
-        // .then((data) => data.isPhishing)
-      );
+      });
+
       if (response.ok) {
-        const prediction = response.json().prediction;
-        const resultDiv = document.getElementById("accuracy-text");
-        resultDiv.innerText =
-          prediction === 0 ? " " : "with accuracy of 97.5% is";
+        const data = await response.json();
+        const prediction = data.prediction;
+        return prediction >= 0.5; // Consider it phishing if the likelihood is >= 0.5
       } else {
         console.error("Request failed:", response.status);
+        return false;
       }
     } catch (error) {
       console.error(error);
+      return false;
     }
-    // }
   }
 
   function showLoading(isLoading) {
