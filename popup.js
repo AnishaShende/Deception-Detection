@@ -1,27 +1,27 @@
-function setup() {
-  var button = document.getElementById("detectButton");
-  var websiteName = document.getElementById("website");
-  var accuracyText = document.getElementById("accuracy-text");
-  var loadingDiv = document.getElementById("loading");
+// function setup() {
+//   var button = document.getElementById("detectButton");
+//   var websiteName = document.getElementById("website");
+//   var accuracyText = document.getElementById("accuracy-text");
+//   var loadingDiv = document.getElementById("loading");
 
-  // Check if all elements exist
-  if (button && websiteName && accuracyText && loadingDiv) {
-    // Add your event listener
-    button.addEventListener("click", detectPhishing);
+//   // Check if all elements exist
+//   if (button && websiteName && accuracyText && loadingDiv) {
+//     // Add your event listener
+//     button.addEventListener("click", detectPhishing);
 
-    // Stop observing
-    observer.disconnect();
-  }
-}
+//     // Stop observing
+//     observer.disconnect();
+//   }
+// }
 
-// Create a new MutationObserver instance
-var observer = new MutationObserver(setup);
+// // Create a new MutationObserver instance
+// var observer = new MutationObserver(setup);
 
-// Start observing the document with the configured parameters
-observer.observe(document.body, { childList: true, subtree: true });
+// // Start observing the document with the configured parameters
+// observer.observe(document.body, { childList: true, subtree: true });
 
-// Call setup initially in case the elements already exist when the script runs
-setup();
+// // Call setup initially in case the elements already exist when the script runs
+// setup();
 
 document.addEventListener("DOMContentLoaded", function () {
   document
@@ -71,6 +71,10 @@ document.addEventListener("DOMContentLoaded", function () {
           updateButton(isPhishing);
           // Update website name and accuracy text based on the prediction result
           updateWebsiteDetails(isPhishing);
+          // After 2 seconds, show the "Scam" or "Genuine" text
+          setTimeout(() => {
+            updateButton(isPhishing);
+          }, 2000);
         })
         .catch((error) => {
           console.error("Error making prediction:", error);
@@ -112,13 +116,13 @@ document.addEventListener("DOMContentLoaded", function () {
       // Phishing styling
       websiteName.style.color = "red";
       // accuracyText.innerText = "";
-      accuracyText.innerText = "This website is identified as a phishing site.";
+      // accuracyText.innerText = "This website is identified as a phishing site.";
     } else {
       // Genuine styling
       websiteName.style.color = "green";
       accuracyText.style.color = "green";
       // accuracyText.innerText = "with accuracy of 97.5% is";
-      accuracyText.innerText = "This website is identified as genuine.";
+      // accuracyText.innerText = "This website is identified as genuine.";
       // Display accuracy text
       // accuracyText.innerText = 'with accuracy of 97.5% is';
     }
@@ -176,24 +180,54 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         body: JSON.stringify({ url: url }),
       });
-
+      console.log(response);
       if (response.ok) {
-        const data = await response.json();
-        const prediction = data.prediction;
-        return prediction >= 0.5; // Consider it phishing if the likelihood is >= 0.5
+        try {
+          // const data = await response.json();
+          const data = await response.json();
+          console.log(data);
+          if ("prediction" in data) {
+            const predictionLikelihood = data["prediction"];
+            updateAccuracyText(predictionLikelihood);
+            return parseFloat(predictionLikelihood) >= 50;
+          } else {
+            console.error("Invalid response format:", data);
+            return false;
+          }
+        } catch (error) {
+          console.error("Invalid JSON in response:", error);
+          return false;
+        }
       } else {
-        console.error("Request failed:", response.status);
+        console.error("Request failed with status:", response.status);
         return false;
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error making prediction:", error);
       return false;
     }
+  }
+
+  function updateAccuracyText(likelihood) {
+    var accuracyText = document.getElementById("accuracy-text");
+    accuracyText.innerText = `Likelihood: ${likelihood}`;
   }
 
   function showLoading(isLoading) {
     // Toggle visibility of the loading element
     var loadingDiv = document.getElementById("loading");
-    loadingDiv.style.display = isLoading ? "block" : "none";
+    var detectButton = document.getElementById("detectButton");
+
+    if (isLoading) {
+      // Display loading animation
+      loadingDiv.style.display = "block";
+      // Disable the detect button while loading
+      detectButton.disabled = true;
+    } else {
+      // Hide loading animation
+      loadingDiv.style.display = "none";
+      // Enable the detect button after receiving the response
+      detectButton.disabled = false;
+    }
   }
 });

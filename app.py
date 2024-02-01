@@ -21,7 +21,11 @@ def hello():
 def check_url():
     try:
         # Get the URL from the request
-        url = request.form.get("url")
+        # data = request.get_json()
+        # url = data.get("url")
+        # url = request.form.get("url")
+        url = request.json.get("url")
+        print("Received URL:", url)
         if not url:
             return "No URL provided in the request.", 400
 
@@ -30,7 +34,7 @@ def check_url():
 
         # Return the likelihood of phishing as a plain text response
         # return f"Likelihood of being a phishing site: {result[0][1] * 100:.2f} %"
-        return jsonify({"Likelihood of being a phishing site (prediction): ": f"{result[0][1] * 100:.2f} %"})
+        return jsonify({"prediction": f"{result[0][1] * 100:.2f} %"})
 
     except Exception as e:
         print("Error:", e)  # Print the error details for debugging
