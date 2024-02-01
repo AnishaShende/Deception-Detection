@@ -63,6 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       var url = tabs[0].url;
 
+      updateWebsite(url);
+
       // Make a request to your machine learning model API or perform in-browser prediction
       // Replace the following line with your actual logic
       makePrediction(url)
@@ -106,6 +108,13 @@ document.addEventListener("DOMContentLoaded", function () {
       button.style.backgroundColor = "green";
     }
   }
+  function updateWebsite(url) {
+    var websiteName = document.getElementById("website");
+
+    // Display the current tab's URL in the popup
+    websiteName.innerText = `Website: ${url}`;
+  }
+
   // Function to update website name and accuracy text based on the prediction result
   function updateWebsiteDetails(isPhishing) {
     var websiteName = document.getElementById("website");
@@ -189,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if ("prediction" in data) {
             const predictionLikelihood = data["prediction"];
             updateAccuracyText(predictionLikelihood);
-            return parseFloat(predictionLikelihood) >= 50;
+            return parseFloat(predictionLikelihood) >= 0.5;
           } else {
             console.error("Invalid response format:", data);
             return false;
