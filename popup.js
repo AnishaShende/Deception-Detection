@@ -1,20 +1,3 @@
-// Define the displayResult function first
-// function displayResult(isPhishing, message) {
-//   // Display the result in the popup
-//   var resultDiv = document.getElementById("result");
-//   resultDiv.innerText = isPhishing
-//     ? "This website may be phishing!"
-//     : "This website seems safe.";
-
-//   // Display an optional additional message (e.g., error message)
-//   if (message) {
-//     resultDiv.innerText += "\n" + message;
-//   }
-// }
-
-// Now, define the other functions
-
-// Define the function to set up your logic
 function setup() {
   var button = document.getElementById("detectButton");
   var websiteName = document.getElementById("website");
@@ -124,10 +107,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var websiteName = document.getElementById("website");
     var accuracyText = document.getElementById("accuracy-text");
 
-    // Default styling
-    // websiteName.style.color = "black";
-    // accuracyText.style.color = "black";
-
     // accuracyText.innerText = "";
     if (isPhishing) {
       // Phishing styling
@@ -144,18 +123,42 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   function makePrediction(url) {
     // Simulate a delay (replace with your actual logic)
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Call your machine learning model to get the prediction result
-        // You'll need to implement this part based on your model and its integration
-        // Resolve with true if phishing, false otherwise
-        // For example:
-        // resolve(fetch('YOUR_MODEL_API_ENDPOINT', { method: 'POST', body: JSON.stringify({ url: url }) })
-        //   .then(response => response.json())
-        //   .then(data => data.isPhishing));
-        resolve(false); // Replace this line with actual logic
-      }, 2000); // Simulate a 2-second delay
-    });
+    var apiUrl = "http://127.0.0.1:33507/check-url";
+    // return new Promise((resolve) => {
+    //   setTimeout(() => {
+    //     // Call your machine learning model to get the prediction result
+    //     // You'll need to implement this part based on your model and its integration
+    //     // Resolve with true if phishing, false otherwise
+    //     // For example:
+    //     // resolve(fetch('YOUR_MODEL_API_ENDPOINT', { method: 'POST', body: JSON.stringify({ url: url }) })
+    //     //   .then(response => response.json())
+    //     //   .then(data => data.isPhishing));
+    //     resolve(false); // Replace this line with actual logic
+    //   }, 2000); // Simulate a 2-second delay
+    // });
+    try {
+      const response = fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url: url }),
+      }).then(
+        (response) => response.json()
+        // .then((data) => data.isPhishing)
+      );
+      if (response.ok) {
+        const prediction = response.json().prediction;
+        const resultDiv = document.getElementById("accuracy-text");
+        resultDiv.innerText =
+          prediction === 0 ? " " : "with accuracy of 97.5% is";
+      } else {
+        console.error("Request failed:", response.status);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    // }
   }
 
   function showLoading(isLoading) {
