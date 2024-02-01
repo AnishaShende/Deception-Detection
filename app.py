@@ -7,7 +7,6 @@ import os
 
 app = Flask(__name__)
 
-# Load the phishing URL detection model
 REPO_ID = "pirocheto/phishing-url-detection"
 FILENAME = "model.onnx"
 model_path = hf_hub_download(repo_id=REPO_ID, filename=FILENAME)
@@ -20,24 +19,19 @@ def hello():
 @app.route("/check-url", methods=["POST"])
 def check_url():
     try:
-        # Get the URL from the request
-        # data = request.get_json()
-        # url = data.get("url")
-        # url = request.form.get("url")
         url = request.json.get("url")
         print("Received URL:", url)
         if not url:
             return "No URL provided in the request.", 400
 
-        # Use the ONNX model to make predictions on the input data
+       
         result = sess.run(None, {"inputs": np.array([url], dtype="str")})[1]
 
-        # Return the likelihood of phishing as a plain text response
-        # return f"Likelihood of being a phishing site: {result[0][1] * 100:.2f} %"
+        
         return jsonify({"prediction": f"{result[0][1] * 100:.2f} %"})
 
     except Exception as e:
-        print("Error:", e)  # Print the error details for debugging
+        print("Error:", e)
         return "Internal server error.", 500
 
 if __name__ == "__main__":

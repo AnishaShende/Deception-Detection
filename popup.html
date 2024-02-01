@@ -4,102 +4,9 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="style.css" />
     <title>Phishing Detector</title>
-    <!-- <meta
-      http-equiv="Content-Security-Policy"
-      content="script-src 'self' 'https://cdn.jsdelivr.net';" -->
-    />
-    <!-- Import ONNXRuntime Web from CDN -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script> -->
-    <!-- Import ONNXRuntime Web from CDN with defer attribute -->
-    <!-- <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"
-    ></script> -->
     <script src="popup.js"></script>
-    <!-- <script>
-      // Your existing script
-      async function main() {
-        try {
-          const model_path =
-            "https://huggingface.co/pirocheto/phishing-url-detection/resolve/main/model.onnx";
-          const session = await ort.InferenceSession.create(model_path);
 
-          const urls = [
-            "https://clubedemilhagem.com/home.php",
-            "http://www.medicalnewstoday.com/articles/188939.php",
-          ];
-
-          // Creating an ONNX tensor from the input data
-          const tensor = new ort.Tensor("string", urls, [urls.length]);
-
-          // Executing the inference session with the input tensor
-          const results = await session.run({ inputs: tensor });
-          const probas = results["probabilities"].data;
-
-          // Displaying results for each URL
-          urls.forEach((url, index) => {
-            const proba = probas[index * 2 + 1];
-            const percent = (proba * 100).toFixed(2);
-
-            document.write(`URL: ${url} <br>`);
-            document.write(
-              `Likelihood of being a phishing site: ${percent} % <br>`
-            );
-            document.write("---- <br>");
-          });
-        } catch (e) {
-          document.write(`Failed to inference ONNX model: ${e}.`);
-        }
-      }
-      main();
-    </script> -->
-    <!-- <script>
-      // use an async context to call onnxruntime functions.
-      async function main() {
-        try {
-          // Check if ort is defined after script is loaded
-          if (typeof ort === "undefined") {
-            throw new Error("ONNXRuntime library not loaded");
-          }
-
-          const model_path =
-            "https://huggingface.co/pirocheto/phishing-url-detection/resolve/main/model.onnx";
-          const session = await ort.InferenceSession.create(model_path);
-
-          const urls = [
-            "https://clubedemilhagem.com/home.php",
-            "http://www.medicalnewstoday.com/articles/188939.php",
-          ];
-
-          // Creating an ONNX tensor from the input data
-          const tensor = new ort.Tensor("string", urls, [urls.length]);
-
-          // Executing the inference session with the input tensor
-          const results = await session.run({ inputs: tensor });
-          const probas = results["probabilities"].data;
-
-          // Displaying results for each URL
-          urls.forEach((url, index) => {
-            const proba = probas[index * 2 + 1];
-            const percent = (proba * 100).toFixed(2);
-
-            document.write(`URL: ${url} <br>`);
-            document.write(
-              `Likelihood of being a phishing site: ${percent} % <br>`
-            );
-            document.write("---- <br>");
-          });
-        } catch (e) {
-          document.write(`Failed to inference ONNX model: ${e}.`);
-        }
-      } -->
-
-    <!-- // Call main when the document is fully loaded
-    document.addEventListener("DOMContentLoaded", main); -->
-    <!-- </script> -->
-    <!-- s -->
     <style>
-      /* simple loading spinner animation */
       @keyframes spin {
         0% {
           transform: rotate(0deg);
@@ -121,13 +28,12 @@
     </style>
   </head>
   <body>
-    <div class="wrapper" style="border-radius: 50px">
+    <div class="wrapper">
       <img src="images/bell.png" class="icon" />
       <div class="title">Scam Alert</div>
       <div id="website" class="website"></div>
       <div id="accuracy-text" class="accuracy-text"></div>
       <button id="detectButton" class="detect-button">Check</button>
-      <!-- Add a loading element -->
       <div id="loading"></div>
     </div>
     <script src="popup.js"></script>
