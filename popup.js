@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isPhishing) {
       // Phishing styling
       websiteName.style.color = "red";
+      accuracyText.style.color = "red";
       // accuracyText.innerText = "";
       // accuracyText.innerText = "This website is identified as a phishing site.";
     } else {
