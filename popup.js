@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
     showLoading(true);
 
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      var url = tabs[0].url;
+      // var url = tabs[0].url;
+      var urlObj = new URL(tabs[0].url);
+      var url = urlObj.hostname;
 
       updateWebsite(url);
 
