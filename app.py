@@ -47,16 +47,21 @@ model = "Vinzzz03/distilroberta-dark-pattern"
 classifier = pipeline("text-classification", model=model)
 
 # Function to get user input and classify
-def classify_text(input_text):
-    result = classifier(input_text)
-    return result[0]['label'], result[0]['score']
+def classify_texts(texts):
+    results = classifier(texts)
+    return results
+    # return result[0]['label'], result[0]['score']
 
-@app.route('/check-text', methods=['POST'])
-def check_text():
+@app.route('/check-texts', methods=['POST'])
+def check_texts():
     data = request.get_json()
-    text = data.get('text')
-    label, score = classify_text(text)
-    return jsonify({'prediction': label, 'confidence': score})
+    texts = data.get('texts')
+    if texts is None:
+        return jsonify({'error': 'No texts field provided.'}), 400
+    predictions = classify_texts(texts)
+    return jsonify(predictions)
+    # label, score = classify_text(text)
+    # return jsonify({'prediction': label, 'confidence': score})
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -79,3 +84,6 @@ if __name__ == '__main__':
 
 # if __name__ == "__main__":
 #     main()
+
+
+# url: http://127.0.0.1:5000/check-text
