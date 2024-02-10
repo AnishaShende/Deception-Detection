@@ -2,7 +2,8 @@
 console.log("Content.js loaded");
 function getTextsFromPage() {
   const texts = Array.from(document.querySelectorAll("*"))
-    .map((element) => element.innerText.trim())
+    .map((element) => (element.innerText ? element.innerText.trim() : ""))
+    // .map((element) => element.innerText.trim())
     .filter((text) => text.length > 0);
   console.log("getTextsFromPage:", texts);
   return texts;
