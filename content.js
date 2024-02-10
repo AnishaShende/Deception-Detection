@@ -8,13 +8,6 @@
 //     alert("Warning: This site may be a phishing site!");
 //   }
 // };
-// content.js
-function getTextsFromPage() {
-  const texts = Array.from(document.querySelectorAll("*"))
-    .map((element) => element.innerText.trim())
-    .filter((text) => text.length > 0);
-  return texts;
-}
 // window.onload = function () {
 //   const button = document.getElementById("detectButton");
 //   if (button) {
@@ -34,9 +27,21 @@ function getTextsFromPage() {
 //     });
 //   }
 // };
+// content.js
+console.log("Content.js loaded");
+function getTextsFromPage() {
+  const texts = Array.from(document.querySelectorAll("*"))
+    .map((element) => element.innerText.trim())
+    .filter((text) => text.length > 0);
+  console.log("getTextsFromPage:", texts);
+  return texts;
+}
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  console.log("Message received:", message);
   if (message.action === "detectTexts") {
     const texts = getTextsFromPage();
+    console.log("texts: " + texts);
     sendResponse({ texts: texts });
+    return true; // To indicate asynchronous response
   }
 });
