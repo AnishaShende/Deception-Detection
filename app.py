@@ -21,9 +21,16 @@ def classify_texts(texts):
     results = []
     for text in texts:
         # Classify each text individually
-        prediction = classifier(text)
+        prediction = classifier(text, max_length=512)
         results.append(prediction)
     return results
+    # Split the text into chunks of 512 tokens
+    #     chunks = [text[i:i+512] for i in range(0, len(text), 512)]
+    #     for chunk in chunks:
+    #         # Classify each chunk individually
+    #         prediction = classifier(chunk)
+    #         results.append(prediction)
+    # return results
 
 @app.route('/check-texts', methods=['POST'])
 def check_texts():
@@ -32,8 +39,11 @@ def check_texts():
     if texts is None:
         return jsonify({'error': 'No texts field provided.'}), 400
     
+    # Remove duplicate texts
+    unique_texts = list(set(texts))
+
     # Classify texts in chunks
-    predictions = classify_texts(texts)
+    predictions = classify_texts(unique_texts)
     # predictions = classify_texts_in_chunks(texts)
     print("Server is running")
     print("Sending predictions (inside app.py): ", predictions)

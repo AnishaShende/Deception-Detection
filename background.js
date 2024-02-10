@@ -20,15 +20,40 @@ async function makePrediction(texts, sendResponse) {
       body: JSON.stringify({ texts: texts }),
     });
     // Log the response to see its content
-    console.log("Response from server:", response);
+    // console.log("Response from server:", response);
 
-    const data = await response.json(); // Parse the JSON response
-    console.log("Data received from server:", data);
+    // const data = await response.json(); // Parse the JSON response
+    // console.log("Data received from server:", data);
+
+    // // Send the classification results to the popup script
+    // chrome.runtime.sendMessage({
+    //   action: "classificationResult",
+    //   classification: data,
+    // });
+    // response = {
+    //   ok: true,
+    //   json: () => {
+    //     return {
+    //       texts: ["Sample text 1", "Sample text 2", "Sample text 3"],
+    //     };
+    //   },
+    // };
+    // console.log("Response OK:", response);
+    if (!response.ok) {
+      console.log("Response not OK:", response);
+      throw new Error("Response not OK");
+    }
+
+    // Parse the JSON response
+    // const data = await response.json();
+    // console.log("Data received from server:", data);
+    const classification = await response.json();
+    console.log("Data received from server:", classification);
 
     // Send the classification results to the popup script
     chrome.runtime.sendMessage({
       action: "classificationResult",
-      classification: data,
+      classification: classification,
     });
   } catch (error) {
     console.error("Error making prediction:", error);
